@@ -1,0 +1,11 @@
+functions:
+creating a new pokedex:
+	create_owner_node
+		input name and starter
+		check if name unique
+			if not print and exit
+		if unique create the node itself and all its vars
+	
+	
+	insert_owner_bst
+	

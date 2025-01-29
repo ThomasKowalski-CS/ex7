@@ -50,7 +50,10 @@ def read_int_safe(prompt):
     """
     Prompt the user for an integer, re-prompting on invalid input.
     """
-    pass
+    while 1:
+        choice = input(prompt)
+        if choice.isdigit(): return int(choice)
+        print("Invalid Input")
 
 def get_poke_dict_by_id(poke_id):
     """
@@ -79,7 +82,9 @@ def create_owner_node(owner_name, first_pokemon=None):
     """
     Create and return a BST node dict with keys: 'owner', 'pokedex', 'left', 'right'.
     """
-    pass
+    if first_pokemon != None:
+        
+
 
 def insert_owner_bst(root, new_node):
     """
@@ -250,13 +255,22 @@ def main_menu():
     5) Print all
     6) Exit
     """
-    pass
+    while 1:
+        print("\n=== Main Menu ===\n1. New Pokedex\n2. Existing Pokedex\n3. Delete a Pokedex\n"
+        "4. Display owners by number of Pokemon\n5. Print All\n6. Exit")
+        choice = read_int_safe("Your Choice: ")
+        if not 1 <= choice <= 6: 
+            print("Invalid Choice")
+            continue
+    
+    
 
 def main():
+    main_menu()
     """
     Entry point: calls main_menu().
     """
-    pass
+    
 
 if __name__ == "__main__":
     main()
