@@ -12,8 +12,7 @@ def read_hoenn_csv(filename):
     """
     Reads 'hoenn_pokedex.csv' and returns a list of dicts:
       [ { "ID": int, "Name": str, "Type": str, "HP": int,
-          "Attack": int, "Can Evolve": "TRUE"/"FALSE" },
-        ... ]
+          "Attack": int, "Can Evolve": "TRUE"/"FALSE" }, ... ]
     """
     data_list = []
     with open(filename, mode='r', encoding='utf-8') as f:
@@ -52,20 +51,26 @@ def read_int_safe(prompt):
     """
     while 1:
         choice = input(prompt)
-        if choice.isdigit(): return int(choice)
+        if choice.isdigit(): 
+            return int(choice)
         print("Invalid Input")
 
 def get_poke_dict_by_id(poke_id):
     """
     Return a copy of the Pokemon dict from HOENN_DATA by ID, or None if not found.
     """
-    pass
+    if 0 <= poke_id < 135:
+        return HOENN_DATA[poke_id]
+    return None
 
 def get_poke_dict_by_name(name):
     """
     Return a copy of the Pokemon dict from HOENN_DATA by name, or None if not found.
     """
-    pass
+    for dict in HOENN_DATA:
+        if dict['Name'] == name:
+            return dict
+    return None
 
 def display_pokemon_list(poke_list):
     """
@@ -77,12 +82,46 @@ def display_pokemon_list(poke_list):
 ########################
 # 2) BST (By Owner Name)
 ########################
+def create_new_owner():
+    name = input("Owner name: ").capitalize()
+
+    # check if name exists
+    global ownerRoot
+    if check_name_dfs(ownerRoot, name) != None:
+        print(f"Owner '{name}' already exists. No new Pokedex created.")
+        return
+
+    # starter
+    STARTER1 = HOENN_DATA[0]['Name']
+    STARTER2 = HOENN_DATA[3]['Name']
+    STARTER3 = HOENN_DATA[6]['Name']
+    print("Choose your starter Pokemon:")
+    print(f"1) {STARTER1}\n2) {STARTER2}\n3) {STARTER3}")
+    starter_id = read_int_safe("Your choice: ")
+    if starter_id == 1:
+        starter_id = 0
+    elif starter_id == 2:
+        starter_id = 3
+    elif starter_id == 3:
+        starter_id = 6
+    else: # not a valid choice (an int but not a valid starter id)
+        print("Invalid. No new Pokedex created.")
+        return
+    
+    # create the node
+    new_owner = create_owner_node(name, starter_id)
+    #insert to tree (check if its empty)
+    
+    ownerRoot = insert_owner_bst(ownerRoot, new_owner) #idk if necessary
+
+    print(f"New Pokedex created for {name} with starter {HOENN_DATA[starter_id]['Name']}.")
+
 
 def create_owner_node(owner_name, first_pokemon=None):
     """
     Create and return a BST node dict with keys: 'owner', 'pokedex', 'left', 'right'.
     """
-    if first_pokemon != None:
+    return {"name": owner_name, "pokedex": [get_poke_dict_by_id(first_pokemon)], "left": None, "right" : None}
         
 
 
@@ -90,13 +129,40 @@ def insert_owner_bst(root, new_node):
     """
     Insert a new BST node by owner_name (alphabetically). Return updated root.
     """
-    pass
+    if root == None: # if empty add as root
+        root = new_node
+        return root
+    
+    cur = root
+    while 1:
+        if new_node['name'] < cur['name']:
+            if cur['left'] == None:
+                cur['left'] = new_node
+                return root
+            else:
+                cur = cur["left"]
+        else:
+            if cur['right'] == None:
+                cur['right'] = new_node
+                return root
+            else:
+                cur = cur['right']
+        
 
 def find_owner_bst(root, owner_name):
     """
     Locate a BST node by owner_name. Return that node or None if missing.
     """
-    pass
+    if root == None:
+        return None
+    
+    if root['name'] == owner_name:
+        return root
+    
+    if owner_name < root['name']:
+        return find_owner_bst(root['left'], owner_name)
+    else:
+        return find_owner_bst(root['right'], owner_name) 
 
 def min_node(node):
     """
@@ -138,6 +204,19 @@ def post_order(root):
     Post-order traversal (left -> right -> root). Print data for each node.
     """
     pass
+
+def check_name_dfs(root, name):
+    if root == None:
+        return None
+    
+    if root['name'] == name:
+        return root
+    
+    left = check_name_dfs(root['left'], name)
+    if left != None:
+        return left
+    right = check_name_dfs(root['right'], name)
+    return right
 
 
 ########################
@@ -243,7 +322,41 @@ def existing_pokedex():
     - Evolve
     - Back
     """
-    pass
+
+    # if tree is empty
+    if ownerRoot == None:
+        print("No owners at all.")
+        return
+    
+    owner_name = input("Owner name: ")
+    owner_node = find_owner_bst(ownerRoot, owner_name.capitalize())
+    if owner_node == None:
+        print(f"Owner '{owner_name}' not found.")
+        return
+    owner_name = owner_name.capitalize()
+    while 1:
+        print(f"\n-- {owner_name}'s Pokedex Menu --\n1. Add Pokemon\n2. Display Pokedex\n3. Release Pokemon\n"
+                                                                        "4. Evolve Pokemon\n5. Back to Main")
+        choice = read_int_safe("Your choice: ")
+        if choice == 1:
+            # Add Pokemon
+            continue
+        elif choice == 2:
+            # Display
+            continue
+        elif choice == 3:
+            # Relese
+            continue
+        elif choice == 4:
+            # Evolve
+            continue
+        elif choice == 5:
+            # Back
+            return
+        else:
+            print("Invalid choice.")
+            continue
+
 
 def main_menu():
     """
@@ -257,11 +370,33 @@ def main_menu():
     """
     while 1:
         print("\n=== Main Menu ===\n1. New Pokedex\n2. Existing Pokedex\n3. Delete a Pokedex\n"
-        "4. Display owners by number of Pokemon\n5. Print All\n6. Exit")
-        choice = read_int_safe("Your Choice: ")
-        if not 1 <= choice <= 6: 
-            print("Invalid Choice")
+              "4. Display owners by number of Pokemon\n5. Print All\n6. Exit")
+        choice = read_int_safe("Your choice: ")
+        
+        if choice == 1:
+            # new pokedex
+            create_new_owner()
             continue
+        elif choice == 2:
+            # enter a pokedex
+            existing_pokedex()
+            continue
+        elif choice == 3:
+            # delete pokedex
+            continue
+        elif choice == 4:
+            # sort owners
+            continue
+        elif choice == 5:
+            # print all
+            continue
+        elif choice == 6:
+            print("Goodbye!")
+            exit(0) #??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+        else:
+            print("Invalid choice.")
+            continue
+
     
     
 

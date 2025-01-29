@@ -1,5 +1,17 @@
+General:
+	HOENN_DATA - cvs data (original pokedex)
+	global ownerRoot
+	
+
+
 functions:
 creating a new pokedex:
+	already existing functions: 
+	create_owner_node(owner_name, first_pokemon=None)
+	insert_owner_bst(root, new_node)
+	
+	
+	creating a pokedex:
 	create_owner_node
 		input name and starter
 		check if name unique
