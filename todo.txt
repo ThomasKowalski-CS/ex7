@@ -21,3 +21,29 @@ creating a new pokedex:
 	
 	insert_owner_bst
 	
+	you stopped on part four deleting pokedex
+	check if im root
+	if not find the node by name and return it's parent!
+	need to handle each case; leaf, child and full parent
+	
+	delete pokedex
+	find node
+	if node is root 
+	apply func accordingly and update ownerRoot
+	
+	if not root
+	find parent
+	apply func accordingly
+	
+	leaf:
+	if root make ownerRoot point to None
+	else make parent point to None
+	
+	one child:
+	make parent point to child
+	
+	two chlidren: 
+	find min node
+	
+	
+	
